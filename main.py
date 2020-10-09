@@ -98,8 +98,11 @@ if __name__ == '__main__':
               [170, 0, 255], [255, 0, 255], [255, 0, 170], [255, 0, 85]]
 
     for i in range(18):
-        x, y = key_points[i]
-        cv2.circle(image, x, y, 2, colors[i], thickness=-1)
+        x = key_points[i][0]
+        y = key_points[i][1]
+#        print("x = " + str(x) + "\n")
+#        print("y = " + str(y) + "\n")
+        cv2.circle(image, (int(x), int(y)), 2, colors[i], thickness=-1)
 
     print("total inference in {:2.3f} seconds".format(time.time() - since))
 
