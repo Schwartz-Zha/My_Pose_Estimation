@@ -39,7 +39,7 @@ def Net_Prediction(model, image, device, backbone='SimpleNet'):
     return heatmap_avg
 
 
-def draw_pose(canvas, key_points):
+def draw_pose(canvas, key_points, scale):
     limbSeq = [[2, 3], [2, 6], [3, 4], [4, 5], [6, 7], [7, 8], [2, 9], [9, 10],
                [10, 11], [2, 12], [12, 13], [13, 14], [2, 1], [1, 15], [15, 17],
                [1, 16], [16, 18], [3, 17], [6, 18]]
@@ -49,11 +49,11 @@ def draw_pose(canvas, key_points):
               [170, 0, 255], [255, 0, 255], [255, 0, 170], [255, 0, 85]]
 
     for i in range(18):
-        x = key_points[i][0]
-        y = key_points[i][1]
+        y = key_points[i][0] / scale
+        x = key_points[i][1] / scale
         #        print("x = " + str(x) + "\n")
         #        print("y = " + str(y) + "\n")
-        cv2.circle(canvas, (int(x), int(y)), 2, colors[i], thickness=-1)
+        cv2.circle(canvas, (int(x), int(y)), 10, colors[i], thickness=-1)
 
     return canvas
 
@@ -97,6 +97,7 @@ if __name__ == '__main__':
     t1 = time.time()
     print("model inference in {:2.3f} seconds".format(t1 - since))
 
+    print("heatmap size: " + str(heatmap.shape) + "\n")
     key_points = []
     for i in range(18):
         heatmapi = heatmap[:, :, i]
@@ -106,7 +107,7 @@ if __name__ == '__main__':
     print("find peaks in {:2.3f} seconds".format(t2 - t1))
 
 
-    canvas = draw_pose(image, key_points)
+    canvas = draw_pose(image, key_points, args.scale)
 
     print("total inference in {:2.3f} seconds".format(time.time() - since))
 
