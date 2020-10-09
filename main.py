@@ -48,13 +48,27 @@ def draw_pose(canvas, key_points, scale):
               [0, 255, 85], [0, 255, 170], [0, 255, 255], [0, 170, 255], [0, 85, 255], [0, 0, 255], [85, 0, 255], \
               [170, 0, 255], [255, 0, 255], [255, 0, 170], [255, 0, 85]]
 
-    for i in range(18):
-        y = key_points[i][0] / scale
-        x = key_points[i][1] / scale
-        #        print("x = " + str(x) + "\n")
-        #        print("y = " + str(y) + "\n")
-        cv2.circle(canvas, (int(x), int(y)), 10, colors[i], thickness=-1)
+    # for i in range(18):
+    #     y = key_points[i][0] / scale
+    #     x = key_points[i][1] / scale
+    #     #        print("x = " + str(x) + "\n")
+    #     #        print("y = " + str(y) + "\n")
+    #     cv2.circle(canvas, (int(x), int(y)), 10, colors[i], thickness=-1)
 
+
+    for i in range(len(limbSeq)):
+        y0 = key_points[limbSeq[i][0] - 1][0] / scale
+        x0 = key_points[limbSeq[i][0] - 1][1] / scale
+        y1 = key_points[limbSeq[i][1] - 1][0] / scale
+        x1 = key_points[limbSeq[i][1] - 1][1] / scale
+        cur_canvas = canvas.copy()
+        my = (y0 + y1) / 2
+        mx = (x0 + x1) / 2
+        length = ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5
+        angle = math.degrees(math.atan2((x0- x1), (y0-y1)))
+        polygon = cv2.ellipse2Poly((int(my), int(mx)), (int(length / 2),  10), int(angle), 0, 360, 1)
+        cv2.fillConvexPoly(cur_canvas, polygon, colors[i])
+        canvas = cv2.addWeighted(canvas, 0.4, cur_canvas, 0.6, 0)
     return canvas
 
 
