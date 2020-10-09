@@ -25,11 +25,11 @@ def Net_Prediction(model, image, device, backbone='SimpleNet'):
         data = torch.from_numpy(im).float().unsqueeze(0).to(device)
 
         with torch.no_grad():
-            _heatmap = model(data)
+            _heatmap = model(data).cpu()
 
         # extract outputs, resize, and remove padding
         heatmap = np.transpose(np.squeeze(_heatmap), (1, 2, 0))  # output 1 is heatmaps
-        heatmap = cv2.resize(heatmap, (0, 0), fx=stride, fy=stride, interpolation=cv2.INTER_CUBIC)
+        heatmap = cv2.resize(np.float32(heatmap), (0, 0), fx=stride, fy=stride, interpolation=cv2.INTER_CUBIC)
         heatmap = heatmap[:imageToTest_padded.shape[0] - pad[2], :imageToTest_padded.shape[1] - pad[3], :]
         heatmap = cv2.resize(heatmap, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_CUBIC)
 
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     model.load_state_dict(pretrained_dict)
 
     model = model.to(device)
-    print('openpose {} model is successfully loaded...'.format(args.backbone))
+    print('model is successfully loaded...')
 
     model.eval()
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     t2 = time.time()
     print("find peaks in {:2.3f} seconds".format(t2 - t1))
 
-    canvas = draw_part(image, all_peaks, args.show, args.scale)
+    canvas = draw_part(image, all_peaks, (-1,0), args.scale)
 
     print("total inference in {:2.3f} seconds".format(time.time() - since))
 

@@ -169,8 +169,8 @@ class Simplified_Pose_Model(nn.Module):
         self.model0 = make_layers(block0, no_relu_layers)
         self.model1_2 = make_layers(block1_2, no_relu_layers)
 
-        def forward(self, x):
-            out0 = self.model0(x)
-            out1 = self.model1_2(out0)
-            return out1
+    def forward(self, x):
+        out0 = self.model0(x)
+        out1 = self.model1_2(out0)
+        return out1
 
