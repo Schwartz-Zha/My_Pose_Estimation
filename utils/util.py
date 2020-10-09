@@ -41,28 +41,25 @@ def peaks(heatmap, threshold):
         map_up[:, 1:] = one_heatmap[:, :-1]
         map_down = np.zeros(one_heatmap.shape)
         map_down[:, :-1] = one_heatmap[:, 1:]
-
         peaks_binary = np.logical_and.reduce(
             (one_heatmap >= map_left, one_heatmap >= map_right, one_heatmap >= map_up, one_heatmap >= map_down,
              one_heatmap > thre1))
-        # find the peak of surrounding with window size = 1 and above threshold
         peaks = list(zip(np.nonzero(peaks_binary)[1], np.nonzero(peaks_binary)[0]))  # note reverse
         peaks_with_score = [x + (map_ori[x[1], x[0]],) for x in peaks]
         peak_id = range(peak_counter, peak_counter + len(peaks))
         peaks_with_score_and_id = [peaks_with_score[i] + (peak_id[i],) for i in range(len(peak_id))]
         all_peaks.append(peaks_with_score_and_id)
         peak_counter += len(peaks)
-
     return all_peaks
 
 
 def connection(all_peaks, paf, image):
-    limbSeq = [[2, 3], [2, 6], [3, 4], [4, 5], [6, 7], [7, 8], [2, 9], [9, 10], \
-               [10, 11], [2, 12], [12, 13], [13, 14], [2, 1], [1, 15], [15, 17], \
+    limbSeq = [[2, 3], [2, 6], [3, 4], [4, 5], [6, 7], [7, 8], [2, 9], [9, 10],
+               [10, 11], [2, 12], [12, 13], [13, 14], [2, 1], [1, 15], [15, 17],
                [1, 16], [16, 18], [3, 17], [6, 18]]
     # the middle joints heatmap correpondence
-    mapIdx = [[31, 32], [39, 40], [33, 34], [35, 36], [41, 42], [43, 44], [19, 20], [21, 22], \
-              [23, 24], [25, 26], [27, 28], [29, 30], [47, 48], [49, 50], [53, 54], [51, 52], \
+    mapIdx = [[31, 32], [39, 40], [33, 34], [35, 36], [41, 42], [43, 44], [19, 20], [21, 22],
+              [23, 24], [25, 26], [27, 28], [29, 30], [47, 48], [49, 50], [53, 54], [51, 52],
               [55, 56], [37, 38], [45, 46]]
     thre2 = 0.1  # connection and paf score threshold
     connection_all = []

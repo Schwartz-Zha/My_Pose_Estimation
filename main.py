@@ -80,16 +80,30 @@ if __name__ == '__main__':
     t1 = time.time()
     print("model inference in {:2.3f} seconds".format(t1 - since))
 
-    all_peaks = peaks(heatmap, args.thre)
+    key_points = []
+    for i in range(18):
+        heatmapi = heatmap[:, :, i]
+        key_points.append( np.unravel_index(heatmapi.argmax(), heatmapi.shape))
 
     t2 = time.time()
     print("find peaks in {:2.3f} seconds".format(t2 - t1))
 
-    canvas = draw_part(image, all_peaks, (-1,0), args.scale)
+
+    limbSeq = [[2, 3], [2, 6], [3, 4], [4, 5], [6, 7], [7, 8], [2, 9], [9, 10],
+               [10, 11], [2, 12], [12, 13], [13, 14], [2, 1], [1, 15], [15, 17],
+               [1, 16], [16, 18], [3, 17], [6, 18]]
+
+    colors = [[255, 0, 0], [255, 85, 0], [255, 170, 0], [255, 255, 0], [170, 255, 0], [85, 255, 0], [0, 255, 0], \
+              [0, 255, 85], [0, 255, 170], [0, 255, 255], [0, 170, 255], [0, 85, 255], [0, 0, 255], [85, 0, 255], \
+              [170, 0, 255], [255, 0, 255], [255, 0, 170], [255, 0, 85]]
+
+    for i in range(18):
+        x, y = key_points[i]
+        cv2.circle(image, x, y, 2, colors[i], thickness=-1)
 
     print("total inference in {:2.3f} seconds".format(time.time() - since))
 
-    plt.imshow(canvas[:, :, [2, 1, 0]])
+    plt.imshow(image)
     plt.axis('off')
     plt.show()
     plt.savefig('results/res1.png', bbox_inches='tight')
